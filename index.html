@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Girls Tech - Calendário de Eventos 2026</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Configuração de Cores (Tailwind) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D84272',
+                        secondary: '#FDBFD6',
+                        cream: '#FFF1E8',
+                        dark: '#953352',
+                        soft: '#F4F2E5'
+                    },
+                    fontFamily: {
+                        pacifico: ['Pacifico', 'cursive'],
+                        poppins: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .bg-gradient-header {
+            background: linear-gradient(135deg, #D84272 0%, #FDBFD6 100%);
+        }
+        .card-event {
+            border-left: 6px solid #D84272;
+        }
+    </style>
+</head>
+<body class="bg-cream text-dark min-h-screen flex flex-col">
+
+    <!-- Ecrã de Login -->
+    <div id="loginScreen" class="fixed inset-0 bg-cream z-50 flex flex-col items-center justify-center">
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-11/12 max-w-md text-center border-t-8 border-primary">
+            <h1 class="font-pacifico text-5xl text-primary mb-2">Girls Tech</h1>
+            <p class="text-sm text-dark mb-6">Acesso ao Calendário de Eventos 2026</p>
+            
+            <input type="text" id="username" placeholder="Utilizador" class="w-full mb-4 p-3 rounded-lg border border-secondary focus:outline-none focus:ring-2 focus:ring-primary bg-soft">
+            <input type="password" id="password" placeholder="Palavra-passe" class="w-full mb-6 p-3 rounded-lg border border-secondary focus:outline-none focus:ring-2 focus:ring-primary bg-soft">
+            
+            <button onclick="login()" class="w-full bg-primary hover:bg-dark text-white font-bold py-3 px-4 rounded-lg transition duration-300">
+                Entrar
+            </button>
+            <p id="errorMsg" class="text-red-500 mt-4 hidden text-sm font-semibold">Credenciais incorretas. Tente novamente.</p>
+        </div>
+    </div>
+
+    <!-- Cabeçalho (Header) -->
+    <header class="bg-gradient-header text-white p-6 shadow-md hidden" id="mainHeader">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between">
+            <div class="flex items-center gap-4 mb-4 md:mb-0">
+                <div class="bg-white rounded-full p-2 h-20 w-20 flex items-center justify-center shadow-lg">
+                    <h1 class="font-pacifico text-2xl text-primary text-center leading-tight">Girls<br>Tech</h1>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-bold font-poppins">Onde mulheres se conectam, aprendem e crescem na Tech.</h2>
+                    <p class="text-lg text-soft mt-1">Conectando mulheres. Impulsionando carreiras em Tech</p>
+                </div>
+            </div>
+            <button onclick="logout()" class="bg-white text-primary font-semibold py-2 px-6 rounded-full hover:bg-soft transition">Sair</button>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="flex-grow max-w-6xl mx-auto w-full p-6 hidden" id="mainContent">
+        <h3 class="text-2xl font-bold text-dark mb-6 text-center md:text-left">Selecione o Estado (Eventos 2026)</h3>
+        
+        <!-- Grelha de Estados Brasileiros -->
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-10" id="statesGrid">
+            <!-- Os botões dos estados serão gerados por JavaScript -->
+        </div>
+
+        <!-- Área de Eventos do Estado Selecionado -->
+        <div id="eventsContainer" class="hidden">
+            <div class="flex justify-between items-center bg-primary text-white p-4 rounded-t-xl">
+                <h4 id="stateTitle" class="text-xl font-bold font-pacifico tracking-wider">São Paulo (SP)</h4>
+                <span class="text-sm">Eventos Confirmados - 2026</span>
+            </div>
+            <div id="eventsList" class="bg-white p-6 rounded-b-xl shadow-lg space-y-6">
+                <!-- Os cartões de eventos serão gerados por JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Rodapé Institucional -->
+    <footer class="bg-dark text-soft text-center p-6 mt-8 hidden" id="mainFooter">
+        <div class="max-w-4xl mx-auto flex flex-col items-center justify-center space-y-3">
+            <h1 class="font-pacifico text-3xl text-secondary">Girls Tech</h1>
+            <p class="font-light text-sm">Onde mulheres se conectam, aprendem e crescem na Tech.</p>
+            <a href="https://www.linkedin.com/company/girls-tech-br/" target="_blank" class="text-secondary hover:text-white transition font-semibold flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                Siga-nos no LinkedIn
+            </a>
+            <p class="text-xs mt-4 pt-4 border-t border-primary/50 w-full">Desenvolvido por Letícia Paiva &copy; 2026</p>
+        </div>
+    </footer>
+
+    <!-- Lógica JavaScript -->
+    <script>
+        // Dados de simulação baseados nas imagens fornecidas
+        const states = [
+            { id: 'SP', name: 'São Paulo' },
+            { id: 'RJ', name: 'Rio de Janeiro' },
+            { id: 'MG', name: 'Minas Gerais' },
+            { id: 'PR', name: 'Paraná' },
+            { id: 'SC', name: 'Santa Catarina' },
+            { id: 'BA', name: 'Bahia' }
+        ];
+
+        // É importante que a "date" esteja no formato YYYY-MM-DD para correta ordenação cronológica.
+        const eventsData = {
+            'SP': [
+                { title: 'USP Innovation Week', category: 'UNIVERSIDADE', cost: 'Gratuito', date: '2026-05-09', displayDate: '05 a 09 de Maio, 2026', link: '#' },
+                { title: 'AWS Summit São Paulo', category: 'MULTINACIONAL', cost: 'Gratuito', date: '2026-08-14', displayDate: '12 a 14 de Agosto, 2026', link: '#' },
+                { title: 'Futurecom 2026', category: 'GRANDE EVENTO', cost: 'Pago', date: '2026-10-22', displayDate: '20 a 22 de Outubro, 2026', link: '#' }
+            ],
+            'RJ': [
+                { title: 'Web Summit Rio', category: 'GRANDE EVENTO', cost: 'Pago', date: '2026-04-18', displayDate: '15 a 18 de Abril, 2026', link: '#' },
+                { title: 'UFRJ Tech Day', category: 'UNIVERSIDADE', cost: 'Gratuito', date: '2026-11-10', displayDate: '10 de Novembro, 2026', link: '#' }
+            ],
+            'MG': [
+                { title: 'Minas Tech Summit', category: 'LINKEDIN EVENT', cost: 'Gratuito', date: '2026-09-30', displayDate: '30 de Setembro, 2026', link: '#' }
+            ]
+        };
+
+        const today = new Date(); // Captura a data atual para comparar e gerar o estado do evento
+
+        // Função de Login
+        function login() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            
+            if (user === 'girlstech' && pass === 'girlstech2026') {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('mainHeader').classList.remove('hidden');
+                document.getElementById('mainContent').classList.remove('hidden');
+                document.getElementById('mainFooter').classList.remove('hidden');
+                renderStates();
+            } else {
+                document.getElementById('errorMsg').classList.remove('hidden');
+            }
+        }
+
+        function logout() {
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('mainHeader').classList.add('hidden');
+            document.getElementById('mainContent').classList.add('hidden');
+            document.getElementById('mainFooter').classList.add('hidden');
+            document.getElementById('eventsContainer').classList.add('hidden');
+        }
+
+        // Renderizar Grelha de Estados
+        function renderStates() {
+            const grid = document.getElementById('statesGrid');
+            grid.innerHTML = '';
+            states.forEach(state => {
+                const btn = document.createElement('button');
+                btn.className = 'bg-white hover:bg-secondary text-dark font-bold py-4 px-2 rounded-xl shadow transition duration-200 border-b-4 border-soft hover:border-primary';
+                btn.innerHTML = `<span class="block text-2xl mb-1">${state.id}</span><span class="text-xs uppercase">${state.name}</span>`;
+                btn.onclick = () => showEvents(state.id, state.name);
+                grid.appendChild(btn);
+            });
+        }
+
+        // Mostrar Eventos do Estado e Ordenar Cronologicamente
+        function showEvents(stateId, stateName) {
+            document.getElementById('eventsContainer').classList.remove('hidden');
+            document.getElementById('stateTitle').innerText = `${stateName} (${stateId})`;
+            
+            const list = document.getElementById('eventsList');
+            list.innerHTML = '';
+
+            let stateEvents = eventsData[stateId] || [];
+
+            if (stateEvents.length === 0) {
+                list.innerHTML = '<p class="text-center text-gray-500 py-6">Ainda não há eventos cadastrados para este estado em 2026.</p>';
+                return;
+            }
+
+            // Ordenação dos eventos: da data mais antiga para a mais recente
+            stateEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            stateEvents.forEach(evt => {
+                const eventDate = new Date(evt.date);
+                // Verifica se a data do evento é anterior à data de hoje
+                const isPast = eventDate < today;
+                
+                const statusLabel = isPast ? 'Concluído' : 'Em breve';
+                const statusColor = isPast ? 'bg-gray-200 text-gray-600' : 'bg-green-100 text-green-700';
+                const costColor = evt.cost === 'Gratuito' ? 'text-green-600 border-green-600' : 'text-orange-500 border-orange-500';
+
+                const card = document.createElement('div');
+                card.className = 'card-event bg-soft p-5 rounded-lg shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4';
+                
+                card.innerHTML = `
+                    <div class="flex-1">
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <span class="bg-primary text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">${evt.category}</span>
+                            <span class="${statusColor} text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">${statusLabel}</span>
+                        </div>
+                        <h5 class="text-2xl font-bold text-gray-800">${evt.title}</h5>
+                        <div class="flex items-center gap-2 mt-3 text-dark font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                            ${evt.displayDate}
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end gap-3 w-full md:w-auto mt-4 md:mt-0">
+                        <span class="px-4 py-1 rounded border font-semibold ${costColor}">${evt.cost}</span>
+                        <a href="${evt.link}" target="_blank" class="bg-primary hover:bg-dark text-white font-bold py-2 px-6 rounded-lg transition text-center w-full md:w-auto shadow-md">
+                            Acessar Inscrição
+                        </a>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>
