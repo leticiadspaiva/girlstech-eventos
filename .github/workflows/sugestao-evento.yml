@@ -39,7 +39,7 @@ jobs:
         id: proc
         run: python scripts/processar_sugestao.py
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           # O corpo da issue é texto de terceiros: passa SEMPRE por variável de ambiente, nunca interpolado no shell.
           ISSUE_BODY: ${{ github.event.issue.body }}
 
