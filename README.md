@@ -55,12 +55,9 @@ Cada evento obedece à seguinte estrutura:
   "displayDate": "20 de Novembro, 2026", 
   "link": "[https://link-de-inscricao.com](https://link-de-inscricao.com)" 
 }
+` ``` `
 
-Campo, O que preencher
-"""title""",O nome oficial do evento.
-"""category""","A etiqueta de destaque (ex: UNIVERSIDADE, MULTINACIONAL, COMUNIDADE, GRANDE EVENTO, BIG TECH, LINKEDIN EVENT)."
-"""cost""","Escreva exatamente ""Gratuito"" ou ""Pago"". As cores das etiquetas mudarão automaticamente."
-"""date""",Data no formato AAAA-MM-DD (Ano-Mês-Dia). Importante: É este campo que o site usa para colocar o evento na ordem correta e saber se ele já foi concluído.
-"""displayDate""","Como a data deve aparecer escrita para o usuário ler (ex: ""10 a 15 de Novembro, 2026"")."
-"""link""",URL completa (com https://) para o site de inscrição oficial.
-
+## 🤖 O Fiscal Automático (GitHub Actions)
+Ao clicar em "Commit changes", o GitHub Actions vai ler o seu arquivo modificado automaticamente.
+Se a formatação estiver perfeita, um check verde (✅) aparecerá e o site será atualizado na internet em menos de 1 minuto.
+Se você esquecer uma vírgula ou uma aspa de fechamento, aparecerá um X vermelho (❌). O sistema impedirá a atualização do site para garantir que ele não fique "fora do ar" e avisará onde está o erro.
