@@ -18,14 +18,16 @@ from datetime import date, datetime
 from pathlib import Path
 from urllib.parse import urlsplit
 
+
 from eventos_lib import (CATEGORIAS, CUSTOS, SECOES, achar_duplicata, carregar, limpar_link,
                          montar_display_date, salvar, validar)
 
-# Confira no Google AI Studio qual modelo "Flash" está liberado no plano gratuito da sua conta.
-MODELO = os.environ.get("MODELO_IA") or "gemini-1.5-flash"
-USER_AGENT = "Mozilla/5.0 (compatible; GirlsTechBot/1.0; +https://github.com/leticiadspaiva/girlstech-eventos)"
-LIMITE_TEXTO = 20_000
-TEMP = Path(os.environ.get("RUNNER_TEMP", "/tmp"))
+import google.generativeai as genai
+
+genai.configure(api_key=os.environ["GEMINI_API_KEY"])
+
+# Use um modelo atual e estável
+model = genai.GenerativeModel("gemini-1.5-flash")
 
 
 class Encerrar(Exception):
