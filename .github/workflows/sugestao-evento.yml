@@ -35,11 +35,12 @@ jobs:
           cache-dependency-path: scripts/requirements.txt
       - run: pip install -r scripts/requirements.txt
 
-      - name: Extrair dados do evento com IA
+      - name: Extrair dados do evento com IA (Gemini)
         id: proc
         run: python scripts/processar_sugestao.py
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # MODELO_IA: gemini-2.5-flash   # descomente para trocar de modelo
           # O corpo da issue é texto de terceiros: passa SEMPRE por variável de ambiente, nunca interpolado no shell.
           ISSUE_BODY: ${{ github.event.issue.body }}
 
