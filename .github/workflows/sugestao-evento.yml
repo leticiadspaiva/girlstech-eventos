@@ -1,0 +1,75 @@
+name: Processar sugestão de evento (IA)
+
+# Fluxo: pessoa abre a issue "Sugerir evento" -> alguém do comitê aplica o label `processar`
+# -> a IA extrai os dados -> a Action abre um Pull Request -> o comitê revisa e faz o merge.
+# Exigir o label `processar` (só quem tem permissão aplica) evita que qualquer pessoa gaste sua cota da API.
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: sugestao-evento
+  cancel-in-progress: false
+
+jobs:
+  processar:
+    if: github.event.label.name == 'processar'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+    steps:
+      - name: Baixar o código do repositório
+        uses: actions/checkout@v4
+
+      - name: Instalar Python e dependências
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: scripts/requirements.txt
+      - run: pip install -r scripts/requirements.txt
+
+      - name: Extrair dados do evento com IA
+        id: proc
+        run: python scripts/processar_sugestao.py
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # O corpo da issue é texto de terceiros: passa SEMPRE por variável de ambiente, nunca interpolado no shell.
+          ISSUE_BODY: ${{ github.event.issue.body }}
+
+      - name: Garantir que o label do PR existe
+        if: steps.proc.outputs.status == 'ok'
+        run: gh label create evento-ia --color D84272 --description "Evento sugerido e extraído por IA (revisar)" --force
+
+      - name: Abrir Pull Request
+        id: cpr
+        if: steps.proc.outputs.status == 'ok'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          # Com PR_TOKEN (PAT), o validador roda no PR. Com o GITHUB_TOKEN padrão, o GitHub NÃO dispara outros workflows.
+          token: ${{ secrets.PR_TOKEN || secrets.GITHUB_TOKEN }}
+          add-paths: eventos.json
+          branch: evento/issue-${{ github.event.issue.number }}
+          delete-branch: true
+          commit-message: "Novo evento: ${{ steps.proc.outputs.titulo }}"
+          title: "Novo evento: ${{ steps.proc.outputs.titulo }}"
+          body-path: ${{ runner.temp }}/pr_body.md
+          labels: evento-ia
+
+      - name: Responder na issue
+        if: always()
+        env:
+          PR_URL: ${{ steps.cpr.outputs.pull-request-url }}
+        run: |
+          RESULTADO="$RUNNER_TEMP/resultado.md"
+          [ -f "$RESULTADO" ] || echo "❌ A automação falhou antes de concluir. Veja os logs da Action." > "$RESULTADO"
+          [ -n "$PR_URL" ] && printf '\n\n🔗 Pull Request para revisão: %s\n' "$PR_URL" >> "$RESULTADO"
+          gh issue comment "$ISSUE_NUMBER" --body-file "$RESULTADO"
+          # Remove o label para permitir reprocessar (basta aplicar `processar` de novo)
+          gh issue edit "$ISSUE_NUMBER" --remove-label processar || true
