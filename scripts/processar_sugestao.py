@@ -17,17 +17,22 @@ import traceback
 from datetime import date, datetime
 from pathlib import Path
 from urllib.parse import urlsplit
+import google.generativeai as genai
 
 
 from eventos_lib import (CATEGORIAS, CUSTOS, SECOES, achar_duplicata, carregar, limpar_link,
                          montar_display_date, salvar, validar)
 
-import google.generativeai as genai
-
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
 # Use um modelo atual e estável
 model = genai.GenerativeModel("gemini-1.5-flash")
+
+# Variáveis globais necessárias em todo o script
+USER_AGENT = "Mozilla/5.0 (compatible; GirlsTechBot/1.0; +https://github.com/leticiadspaiva/girlstech-eventos)"
+TEMP = Path(os.environ.get("RUNNER_TEMP", "/tmp"))
+MODELO = os.environ.get("MODELO_IA") or "gemini-1.5-flash"
+LIMITE_TEXTO = 20_000
 
 
 class Encerrar(Exception):
