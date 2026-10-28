@@ -4,13 +4,15 @@
 A IA NUNCA publica: este script só altera o arquivo no runner; quem abre o Pull Request é o workflow
 e quem faz o merge é uma pessoa do comitê.
 
-Variáveis de ambiente: ISSUE_BODY, ISSUE_NUMBER, ANTHROPIC_API_KEY, (opcional) MODELO_IA.
+Variáveis de ambiente: ISSUE_BODY, ISSUE_NUMBER, GEMINI_API_KEY, (opcional) MODELO_IA.
 """
 import ipaddress
+import json
 import os
 import re
 import socket
 import sys
+import time
 import traceback
 from datetime import date, datetime
 from pathlib import Path
@@ -19,7 +21,8 @@ from urllib.parse import urlsplit
 from eventos_lib import (CATEGORIAS, CUSTOS, SECOES, achar_duplicata, carregar, limpar_link,
                          montar_display_date, salvar, validar)
 
-MODELO = os.environ.get("MODELO_IA", "claude-haiku-5-5")
+# Confira no Google AI Studio qual modelo "Flash" está liberado no plano gratuito da sua conta.
+MODELO = os.environ.get("MODELO_IA") or "gemini-2.5-flash"
 USER_AGENT = "Mozilla/5.0 (compatible; GirlsTechBot/1.0; +https://github.com/leticiadspaiva/girlstech-eventos)"
 LIMITE_TEXTO = 20_000
 TEMP = Path(os.environ.get("RUNNER_TEMP", "/tmp"))
@@ -123,28 +126,31 @@ def buscar_pagina(url):
 
 
 # ---------------------------------------------------------------- 3. extrair com o LLM
-FERRAMENTA = {
-    "name": "registrar_evento",
-    "description": "Registra os dados extraídos do evento. Use null para qualquer dado que não esteja explícito.",
-    "input_schema": {
-        "type": "object",
-        "properties": {
-            "is_evento_tecnologia": {"type": "boolean", "description": "true se for um evento real de tecnologia."},
-            "motivo": {"type": ["string", "null"], "description": "Se não for evento de tecnologia ou faltar dado, explique em 1 frase."},
-            "title": {"type": ["string", "null"], "description": "Nome oficial do evento (com a edição/ano, se houver)."},
-            "category": {"type": ["string", "null"], "enum": CATEGORIAS + [None]},
-            "cost": {"type": ["string", "null"], "enum": CUSTOS + [None]},
-            "estado": {"type": ["string", "null"], "enum": SECOES + [None],
-                       "description": "UF onde ocorre presencialmente, ou ONLINE se for 100% online."},
-            "data_inicio": {"type": ["string", "null"], "description": "AAAA-MM-DD. Se só o mês for conhecido, use AAAA-MM-01."},
-            "data_fim": {"type": ["string", "null"], "description": "AAAA-MM-DD do último dia, se for multi-dia."},
-            "precisao_data": {"type": ["string", "null"], "enum": ["dia", "mes", None]},
-            "confianca": {"type": "string", "enum": ["alta", "media", "baixa"]},
-            "observacoes": {"type": ["string", "null"], "description": "Ambiguidades úteis para quem vai revisar (ex.: híbrido, ingresso misto)."},
-        },
-        "required": ["is_evento_tecnologia", "motivo", "title", "category", "cost", "estado",
-                     "data_inicio", "data_fim", "precisao_data", "confianca", "observacoes"],
+def _texto(descricao, opcoes=None):
+    d = {"type": "STRING", "nullable": True, "description": descricao}
+    if opcoes:
+        d["enum"] = opcoes
+    return d
+
+
+# Formato de resposta estruturada do Gemini (responseSchema): a API devolve JSON já nesse formato.
+ESQUEMA = {
+    "type": "OBJECT",
+    "properties": {
+        "is_evento_tecnologia": {"type": "BOOLEAN", "description": "true se for um evento real de tecnologia."},
+        "motivo": _texto("Se não for evento de tecnologia ou faltar dado, explique em 1 frase."),
+        "title": _texto("Nome oficial do evento (com a edição/ano, se houver)."),
+        "category": _texto("Categoria do evento.", CATEGORIAS),
+        "cost": _texto("Gratuito ou Pago.", CUSTOS),
+        "estado": _texto("UF onde ocorre presencialmente, ou ONLINE se for 100% online.", SECOES),
+        "data_inicio": _texto("AAAA-MM-DD. Se só o mês for conhecido, use AAAA-MM-01."),
+        "data_fim": _texto("AAAA-MM-DD do último dia, se for multi-dia."),
+        "precisao_data": _texto("dia ou mes.", ["dia", "mes"]),
+        "confianca": {"type": "STRING", "enum": ["alta", "media", "baixa"]},
+        "observacoes": _texto("Ambiguidades úteis para quem vai revisar (ex.: híbrido, ingresso misto)."),
     },
+    "required": ["is_evento_tecnologia", "motivo", "title", "category", "cost", "estado",
+                 "data_inicio", "data_fim", "precisao_data", "confianca", "observacoes"],
 }
 
 SISTEMA = """Você extrai dados de eventos de tecnologia para o calendário "Girls Tech" (Brasil).
@@ -178,19 +184,47 @@ def exemplos_do_calendario(dados):
 
 
 def extrair_com_llm(url, info, texto, dados, hoje):
-    import anthropic  # importado aqui para o resto do script ser testável sem a biblioteca
+    """Chama a API do Gemini (REST) e devolve um dict com os campos extraídos."""
+    import requests
 
-    cliente = anthropic.Anthropic()  # lê ANTHROPIC_API_KEY do ambiente
+    chave = os.environ.get("GEMINI_API_KEY")
+    if not chave:
+        raise Encerrar("erro", "❌ O secret `GEMINI_API_KEY` não está configurado no repositório.")
     mensagem = (f"Hoje é {hoje:%d/%m/%Y}.\n<link>{url}</link>\n"
                 f"<informacoes_do_solicitante>{info or '(nenhuma)'}</informacoes_do_solicitante>\n"
                 f"<pagina>{texto or '(não foi possível ler a página)'}</pagina>")
-    resp = cliente.messages.create(
-        model=MODELO, max_tokens=1200,
-        system=SISTEMA.format(exemplos=exemplos_do_calendario(dados)),
-        tools=[FERRAMENTA], tool_choice={"type": "tool", "name": "registrar_evento"},
-        messages=[{"role": "user", "content": mensagem}],
-    )
-    return next(b.input for b in resp.content if b.type == "tool_use")
+    corpo = {
+        "systemInstruction": {"parts": [{"text": SISTEMA.format(exemplos=exemplos_do_calendario(dados))}]},
+        "contents": [{"role": "user", "parts": [{"text": mensagem}]}],
+        "generationConfig": {"temperature": 0, "responseMimeType": "application/json", "responseSchema": ESQUEMA},
+    }
+    endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{MODELO}:generateContent"
+
+    resp = None
+    for espera in (0, 8, 25, 60):  # o plano gratuito tem limite por minuto: tenta de novo com pausa
+        time.sleep(espera)
+        resp = requests.post(endpoint, json=corpo, timeout=90,
+                             headers={"x-goog-api-key": chave, "Content-Type": "application/json"})
+        if resp.status_code not in (429, 500, 503):
+            break
+    if resp.status_code == 429:
+        raise Encerrar("erro", "⏳ O limite gratuito da API do Gemini foi atingido. Reaplique o label `processar` mais tarde.")
+    if resp.status_code != 200:
+        print(f"Resposta da API: {resp.status_code} {resp.text[:500]}", file=sys.stderr)
+        raise Encerrar("erro", f"❌ A API do Gemini respondeu com erro {resp.status_code}. Veja os logs da Action "
+                       "(chave inválida ou modelo indisponível são as causas mais comuns).")
+
+    dados_resp = resp.json()
+    try:
+        texto_json = dados_resp["candidates"][0]["content"]["parts"][0]["text"]
+        resultado = json.loads(re.sub(r"^```(?:json)?|```$", "", texto_json.strip(), flags=re.M).strip())
+    except (KeyError, IndexError, TypeError, ValueError):
+        print(f"Resposta inesperada: {str(dados_resp)[:500]}", file=sys.stderr)
+        raise Encerrar("erro", "❌ A IA não devolveu uma resposta utilizável (possível bloqueio de conteúdo). "
+                       "Tente novamente ou cadastre o evento manualmente.")
+    # Alguns modelos devolvem "null" como texto: normaliza para None de verdade
+    return {k: (None if isinstance(v, str) and v.strip().lower() in ("", "null", "none") else v)
+            for k, v in resultado.items()}
 
 
 # ---------------------------------------------------------------- 4. montar e validar
@@ -314,7 +348,8 @@ def main():
         saida(e.status, e.mensagem)
     except Exception as e:  # falha inesperada (API fora do ar, etc.): não derruba o job, avisa na issue
         traceback.print_exc()
-        saida("erro", f"❌ Erro inesperado ao processar ({type(e).__name__}). Veja os logs da Action e tente novamente.")
+        detalhe = f"{type(e).__name__}: {str(e)}"[:250].replace("\n", " ")
+        saida("erro", f"❌ Erro inesperado ao processar: `{detalhe}`. Veja os logs da Action para mais detalhes.")
     return 0
 
 
