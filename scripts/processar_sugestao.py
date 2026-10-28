@@ -22,7 +22,7 @@ from eventos_lib import (CATEGORIAS, CUSTOS, SECOES, achar_duplicata, carregar, 
                          montar_display_date, salvar, validar)
 
 # Confira no Google AI Studio qual modelo "Flash" está liberado no plano gratuito da sua conta.
-MODELO = os.environ.get("MODELO_IA") or "gemini-2.5-flash"
+MODELO = os.environ.get("MODELO_IA") or "gemini-1.5-flash"
 USER_AGENT = "Mozilla/5.0 (compatible; GirlsTechBot/1.0; +https://github.com/leticiadspaiva/girlstech-eventos)"
 LIMITE_TEXTO = 20_000
 TEMP = Path(os.environ.get("RUNNER_TEMP", "/tmp"))
