@@ -54,5 +54,13 @@ Cada evento obedece à seguinte estrutura:
   "date": "2026-11-20", 
   "displayDate": "20 de Novembro, 2026", 
   "link": "[https://link-de-inscricao.com](https://link-de-inscricao.com)" 
-} ```
+}
+
+Campo, O que preencher
+"""title""",O nome oficial do evento.
+"""category""","A etiqueta de destaque (ex: UNIVERSIDADE, MULTINACIONAL, COMUNIDADE, GRANDE EVENTO, BIG TECH, LINKEDIN EVENT)."
+"""cost""","Escreva exatamente ""Gratuito"" ou ""Pago"". As cores das etiquetas mudarão automaticamente."
+"""date""",Data no formato AAAA-MM-DD (Ano-Mês-Dia). Importante: É este campo que o site usa para colocar o evento na ordem correta e saber se ele já foi concluído.
+"""displayDate""","Como a data deve aparecer escrita para o usuário ler (ex: ""10 a 15 de Novembro, 2026"")."
+"""link""",URL completa (com https://) para o site de inscrição oficial.
 
