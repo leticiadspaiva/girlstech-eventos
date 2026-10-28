@@ -1,0 +1,37 @@
+{
+  "SP": [
+    { "title": "USP Innovation Week", "category": "UNIVERSIDADE", "cost": "Gratuito", "date": "2026-05-09", "displayDate": "05 a 09 de Maio, 2026", "link": "#" },
+    { "title": "AWS Summit São Paulo", "category": "MULTINACIONAL", "cost": "Gratuito", "date": "2026-08-14", "displayDate": "12 a 14 de Agosto, 2026", "link": "#" },
+    { "title": "Futurecom 2026", "category": "GRANDE EVENTO", "cost": "Pago", "date": "2026-10-22", "displayDate": "20 a 22 de Outubro, 2026", "link": "#" },
+    { "title": "DevFest SP", "category": "COMUNIDADE", "cost": "Gratuito", "date": "2026-11-05", "displayDate": "05 de Novembro, 2026", "link": "#" },
+    { "title": "TDC São Paulo", "category": "GRANDE EVENTO", "cost": "Pago", "date": "2026-07-20", "displayDate": "20 a 22 de Julho, 2026", "link": "#" },
+    { "title": "FIAP Next", "category": "UNIVERSIDADE", "cost": "Gratuito", "date": "2026-09-10", "displayDate": "10 de Setembro, 2026", "link": "#" }
+  ],
+  "RJ": [
+    { "title": "Web Summit Rio", "category": "GRANDE EVENTO", "cost": "Pago", "date": "2026-04-18", "displayDate": "15 a 18 de Abril, 2026", "link": "#" },
+    { "title": "UFRJ Tech Day", "category": "UNIVERSIDADE", "cost": "Gratuito", "date": "2026-11-10", "displayDate": "10 de Novembro, 2026", "link": "#" },
+    { "title": "Rio Innovation Week", "category": "GRANDE EVENTO", "cost": "Pago", "date": "2026-08-15", "displayDate": "13 a 15 de Agosto, 2026", "link": "#" },
+    { "title": "Tech Startups RJ", "category": "LINKEDIN EVENT", "cost": "Gratuito", "date": "2026-10-01", "displayDate": "01 de Outubro, 2026", "link": "#" }
+  ],
+  "MG": [
+    { "title": "Minas Tech Summit", "category": "LINKEDIN EVENT", "cost": "Gratuito", "date": "2026-09-30", "displayDate": "30 de Setembro, 2026", "link": "#" },
+    { "title": "Campus Party MG", "category": "GRANDE EVENTO", "cost": "Pago", "date": "2026-11-15", "displayDate": "10 a 15 de Novembro, 2026", "link": "#" },
+    { "title": "Google I/O Extended BH", "category": "MULTINACIONAL", "cost": "Gratuito", "date": "2026-06-25", "displayDate": "25 de Junho, 2026", "link": "#" },
+    { "title": "UFMG Dev Day", "category": "UNIVERSIDADE", "cost": "Gratuito", "date": "2026-05-20", "displayDate": "20 de Maio, 2026", "link": "#" }
+  ],
+  "PR": [
+    { "title": "Viasoft Connect", "category": "GRANDE EVENTO", "cost": "Pago", "date": "2026-06-10", "displayDate": "10 de Junho, 2026", "link": "#" },
+    { "title": "Curitiba Tech Day", "category": "COMUNIDADE", "cost": "Gratuito", "date": "2026-09-12", "displayDate": "12 de Setembro, 2026", "link": "#" }
+  ],
+  "RS": [
+    { "title": "Gramado Summit", "category": "GRANDE EVENTO", "cost": "Pago", "date": "2026-04-12", "displayDate": "10 a 12 de Abril, 2026", "link": "#" },
+    { "title": "TDC Porto Alegre", "category": "GRANDE EVENTO", "cost": "Pago", "date": "2026-11-05", "displayDate": "03 a 05 de Novembro, 2026", "link": "#" },
+    { "title": "PUCRS Tech Fest", "category": "UNIVERSIDADE", "cost": "Gratuito", "date": "2026-08-20", "displayDate": "20 de Agosto, 2026", "link": "#" },
+    { "title": "Agile Brazil RS", "category": "COMUNIDADE", "cost": "Pago", "date": "2026-10-15", "displayDate": "15 de Outubro, 2026", "link": "#" }
+  ],
+  "SC": [
+    { "title": "Startup Summit SC", "category": "GRANDE EVENTO", "cost": "Pago", "date": "2026-08-16", "displayDate": "14 a 16 de Agosto, 2026", "link": "#" },
+    { "title": "Floripa Tech Meetup", "category": "LINKEDIN EVENT", "cost": "Gratuito", "date": "2026-07-05", "displayDate": "05 de Julho, 2026", "link": "#" },
+    { "title": "RD Summit", "category": "GRANDE EVENTO", "cost": "Pago", "date": "2026-10-25", "displayDate": "23 a 25 de Outubro, 2026", "link": "#" }
+  ]
+}
