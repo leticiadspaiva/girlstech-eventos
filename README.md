@@ -54,3 +54,14 @@ Cada evento obedece à seguinte estrutura:
   "displayDate": "20 de Novembro, 2026", 
   "link": "[https://link-de-inscricao.com](https://link-de-inscricao.com)" 
 }
+
+### 🤖 O Fiscal Automático (GitHub Actions)
+Ao clicar em "Commit changes", o GitHub Actions vai ler o seu arquivo modificado automaticamente.
+Se a formatação estiver perfeita, um check verde (✅) aparecerá e o site será atualizado na internet em menos de 1 minuto.
+Se você esquecer uma vírgula ou uma aspa de fechamento, aparecerá um X vermelho (❌). O sistema impedirá a atualização do site para garantir que ele não fique "fora do ar" e avisará onde está o erro.
+
+### 👩‍💻 Sobre a Autora
+Projeto idealizado, desenhado e desenvolvido com foco no compartilhamento de conhecimento e acessibilidade no setor de tecnologia. Aliando a sólida experiência em liderança de gestão de TI e suporte técnico com a constante atualização de habilidades através da Pós Tech de Gestão de TI da FIAP, esta aplicação reflete o compromisso com a criação de soluções práticas, escaláveis e visualmente agradáveis para a comunidade tech.
+
+### 🤖 Assistência de IA e Produtividade
+A estruturação base do código (HTML, Tailwind CSS e lógica em JavaScript), arquitetura de dados e o rascunho da documentação deste projeto foram acelerados com o auxílio de Inteligência Artificial. Toda a engenharia de prompts, curadoria das regras de negócio, design do fluxo de usuário, revisão do banco de dados (JSON) e integração final foram gerenciadas e validadas ativamente por mim, utilizando a IA como ferramenta de otimização de tempo e produtividade técnica.
