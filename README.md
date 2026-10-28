@@ -22,10 +22,10 @@ A plataforma visa democratizar e facilitar o acesso à informação sobre evento
 
 ## 🎨 UI/UX e Paleta de Cores
 O design foi construído em torno da identidade visual oficial da comunidade Girls Tech:
-- **Primary:** `#D84272` (Rosa Escuro/Magenta) - Botões e Destaques
-- **Secondary:** `#FDBFD6` (Rosa Claro) - Elementos de apoio
-- **Cream:** `#FFF1E8` (Fundo Principal) - Leitura confortável
-- **Dark:** `#953352` (Textos e Títulos) - Contraste e acessibilidade
+- **Primary:** `#D84272` (Rosa Escuro/Magenta)
+- **Secondary:** `#FDBFD6` (Rosa Claro)
+- **Cream:** `#FFF1E8` (Fundo Principal)
+- **Dark:** `#953352` (Textos e Títulos)
 - **Soft:** `#F4F2E5` (Fundo de Cartões)
 
 ---
@@ -40,11 +40,37 @@ A plataforma foi construída para que **qualquer pessoa**, mesmo sem conheciment
 3. No canto superior direito da caixa de código, clique no **ícone de Lápis (Edit this file)**.
 4. Identifique o bloco do Estado desejado (ex: `"SP": [`) ou a seção `"ONLINE": [`.
 5. Copie a estrutura de um evento existente e cole na linha abaixo (lembre-se de separar cada evento com uma vírgula `,`).
-6. Altere as informações entre as aspas duplas `""`.
+6. Altere as informações do evento.
 7. Clique no botão verde **Commit changes...** para salvar.
 
-### Entendendo a Estrutura de um Evento
-Cada evento obedece à seguinte estrutura:
+### O que preencher em cada campo?
+
+| Campo | O que preencher |
+| :--- | :--- |
+| `"title"` | O nome oficial do evento. |
+| `"category"` | A etiqueta de destaque (ex: UNIVERSIDADE, MULTINACIONAL, COMUNIDADE, GRANDE EVENTO, BIG TECH, LINKEDIN EVENT). |
+| `"cost"` | Escreva exatamente `"Gratuito"` ou `"Pago"`. As cores das etiquetas mudarão automaticamente. |
+| `"date"` | Data no formato **AAAA-MM-DD** (Ano-Mês-Dia). **Importante:** É este campo que o site usa para colocar o evento na ordem correta e saber se ele já foi concluído. |
+| `"displayDate"`| Como a data deve aparecer escrita para o usuário ler (ex: "10 a 15 de Novembro, 2026"). |
+| `"link"` | URL completa (com `https://`) para o site de inscrição oficial. |
+
+### 🤖 O Fiscal Automático (GitHub Actions)
+Ao clicar em "Commit changes", o GitHub Actions vai ler o seu arquivo modificado automaticamente.
+- Se a formatação estiver perfeita, um **check verde (✅)** aparecerá e o site será atualizado na internet em menos de 1 minuto.
+- Se você esquecer uma vírgula ou uma aspa de fechamento, aparecerá um **X vermelho (❌)**. O sistema impedirá a atualização do site para garantir que ele não fique "fora do ar" e avisará onde está o erro.
+
+---
+
+## 👩‍💻 Sobre a Autora
+Projeto idealizado, desenhado e desenvolvido com foco no compartilhamento de conhecimento e acessibilidade no setor de tecnologia. Aliando a sólida experiência em liderança de gestão de TI e suporte técnico com a constante atualização de habilidades através da Pós Tech de Gestão de TI da FIAP, esta aplicação reflete o compromisso com a criação de soluções práticas, escaláveis e visualmente agradáveis para a comunidade tech.
+
+## 🤖 Assistência de IA e Produtividade
+A estruturação base do código (HTML, Tailwind CSS e lógica em JavaScript), arquitetura de dados e o rascunho da documentação deste projeto foram acelerados com o auxílio de Inteligência Artificial. Toda a engenharia de prompts, curadoria das regras de negócio, design do fluxo de usuário, revisão do banco de dados (JSON) e integração final foram gerenciadas e validadas ativamente por mim, utilizando a IA como ferramenta de otimização de tempo e produtividade técnica.
+
+---
+
+## 💻 Exemplo da Estrutura do Código (Anexo Técnico)
+Abaixo está o modelo exato de como a estrutura de um evento se parece dentro do arquivo `eventos.json`:
 
 ```json
 { 
@@ -53,11 +79,5 @@ Cada evento obedece à seguinte estrutura:
   "cost": "Gratuito", 
   "date": "2026-11-20", 
   "displayDate": "20 de Novembro, 2026", 
-  "link": "[https://link-de-inscricao.com](https://link-de-inscricao.com)" 
+  "link": "https://link-de-inscricao.com" 
 }
-` ``` `
-
-## 🤖 O Fiscal Automático (GitHub Actions)
-Ao clicar em "Commit changes", o GitHub Actions vai ler o seu arquivo modificado automaticamente.
-Se a formatação estiver perfeita, um check verde (✅) aparecerá e o site será atualizado na internet em menos de 1 minuto.
-Se você esquecer uma vírgula ou uma aspa de fechamento, aparecerá um X vermelho (❌). O sistema impedirá a atualização do site para garantir que ele não fique "fora do ar" e avisará onde está o erro.
