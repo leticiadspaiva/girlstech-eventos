@@ -1,0 +1,25 @@
+name: "📅 Sugerir evento"
+description: Indique um evento de tecnologia para o calendário Girls Tech
+title: "[Evento] "
+labels: ["sugestao-evento"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigada por contribuir com a comunidade! 💖
+        Cole o link do evento abaixo. Nosso comitê vai conferir e, se estiver tudo certo, ele entra no calendário.
+  - type: input
+    id: link
+    attributes:
+      label: Link do evento
+      description: Página oficial de divulgação ou inscrição. Eventos do LinkedIn também são aceitos.
+      placeholder: https://
+    validations:
+      required: true
+  - type: textarea
+    id: info
+    attributes:
+      label: Informações adicionais (opcional)
+      description: |
+        Cole aqui o texto do evento (ajuda muito com eventos do LinkedIn, que bloqueiam leitura automática)
+        ou informe detalhes como data, cidade/estado e se a inscrição é gratuita ou paga.
