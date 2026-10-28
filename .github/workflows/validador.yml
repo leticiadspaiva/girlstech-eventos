@@ -1,23 +1,22 @@
 name: Validar Eventos Girls Tech
 
-# A automação roda toda vez que alguém tentar atualizar o arquivo eventos.json
+# Roda toda vez que alguém alterar o eventos.json (direto na main ou via Pull Request)
 on:
   push:
     paths:
       - 'eventos.json'
+      - 'scripts/**'
+  pull_request:
+    paths:
+      - 'eventos.json'
+      - 'scripts/**'
 
 jobs:
   verificacao-de-dados:
     runs-on: ubuntu-latest
     steps:
       - name: Baixar o código do repositório
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Fiscalizar formato do JSON
-        run: |
-          if jq . eventos.json > /dev/null; then
-            echo "✅ Estrutura de dados validada com sucesso! Tudo em conformidade."
-          else
-            echo "❌ Erro: O arquivo eventos.json possui um erro de formatação (provavelmente uma vírgula faltando ou sobrando). Por favor, corrija para o site não quebrar."
-            exit 1
-          fi
+      - name: Fiscalizar eventos.json (formato, campos, datas, custo e links)
+        run: python3 scripts/validar.py
